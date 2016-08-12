@@ -13,7 +13,7 @@
 ; Author(s) .....: Juno_okyo
 ; ===============================================================================================================================
 
-Func _showAboutDialog($softwareName, $version, $author, $copyrightStart = Default, $copyrightEnd = Default, $website = Default, $hwnd = Default, $icon = Default, $width = Default, $height = Default)
+Func _showAboutDialog($softwareName, $version, $author, $copyrightStart = Default, $copyrightEnd = Default, $website = Default, $hwnd = Default, $icon = Default, $width = Default, $height = Default, $colorbg = Default, $colofg = Default)
 	Opt("GUIOnEventMode", 0)
 
 	If $hwnd = Default Then $hwnd = WinGetHandle(AutoItWinGetTitle())
@@ -41,15 +41,27 @@ Func _showAboutDialog($softwareName, $version, $author, $copyrightStart = Defaul
 
 	#Region ### START Koda GUI section ###
 	Local $FormMain = GUICreate('About', 393, $GUIheight, -1, -1, BitXOR($GUI_SS_DEFAULT_GUI, $WS_MINIMIZEBOX), -1, $hwnd)
+	; BG Color
+	If ($colorbg != Default) Then GUISetBkColor($colorbg)
+
 	GUISetFont(12, 400, 0, 'Segoe UI')
 	GUICtrlCreateIcon($icon, $iconName, 20, 20, 48, 48)
 	GUICtrlCreateLabel($softwareName, 80, 20, 238, 25)
+	; Set custom color for label
+	If ($colorfg != Default) Then GUICtrlSetColor(-1,$colorfg)
 	GUICtrlCreateLabel($copyright, 80, 50, 257, 25)
-
+	; Set custom color for label
+	If ($colorfg != Default) Then GUICtrlSetColor(-1,$colorfg)
+	
 	If $website <> Default Then
 		Local $labelWebsite = GUICtrlCreateLabel('https://junookyo.blogspot.com/', 80, 80, 222, 25)
 		GUICtrlSetFont(-1, 12, 400, 4, 'Segoe UI')
-		GUICtrlSetColor(-1, 0x0000FF)
+		; Set custom color for label
+		If ($colorfg != Default) Then
+			GUICtrlSetColor(-1,$colorfg)
+		Else
+			GUICtrlSetColor(-1, 0x0000FF)
+		EndIf
 		GUICtrlSetCursor(-1, 0)
 	Else
 		; Prevent GUIGetMsg error
@@ -68,7 +80,7 @@ Func _showAboutDialog($softwareName, $version, $author, $copyrightStart = Defaul
 			Case $labelWebsite
 				; Make sure it is an valid URL
 				Local $url = GUICtrlRead($labelWebsite)
-				If StringLeft($url, 4) = 'http' Then ShellExecute($url)
+				If StringLeft($url, 4) = 'http' or StringLeft($url, 3) = 'www' Then ShellExecute($url)
 
 			Case $btnOK
 				ExitLoop
